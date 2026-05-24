@@ -9,11 +9,20 @@
 <style>
   :root {
     --primary: #0055a5;
-    --primary-light: #e8f0fe;
+    --primary-light: #dce7f5;
+    --primary-dark: #003d7a;
     --accent: #e8860c;
     --accent-light: #fff3e0;
     --green: #16a34a;
+    --green-bg: #dcfce7;
     --red: #b91c1c;
+    --red-bg: #fee2e2;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+    --purple: #7c3aed;
+    --purple-bg: #f3e8ff;
+    --teal: #0891b2;
+    --teal-bg: #e0f2fe;
     --gray: #64748b;
     --bg: #f8fafc;
     --card: #ffffff;
@@ -29,7 +38,7 @@
 
   /* Header */
   .header {
-    background: linear-gradient(135deg, var(--primary) 0%, #003d7a 100%);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, #2563eb 100%);
     color: white;
     padding: 28px 32px 24px;
     position: relative;
@@ -39,16 +48,24 @@
     content: '';
     position: absolute;
     top: -50%; right: -10%;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
     border-radius: 50%;
   }
   .header-content { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
   .header h1 { font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
   .header .subtitle { font-size: 14px; opacity: 0.85; margin-top: 4px; }
-  .header .badge { background: var(--accent); color: white; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header .tags { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .header .tag {
+    background: rgba(255,255,255,0.15);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
 
-  /* Container */
+  /* Main container */
   .container { max-width: 1400px; margin: 0 auto; padding: 20px 16px; }
 
   /* Key metrics */
@@ -66,19 +83,43 @@
     border-left: 4px solid var(--primary);
     position: relative;
     transition: transform 0.15s, box-shadow 0.15s;
+    cursor: default;
   }
   .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-  .metric-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; }
-  .metric-card .value { font-size: 32px; font-weight: 700; margin-top: 4px; letter-spacing: -0.5px; }
-  .metric-card .change { font-size: 13px; margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-  .metric-card .change.up { color: var(--green); }
-  .metric-card .change.down { color: var(--red); }
-  .metric-card .change.neutral { color: var(--gray); }
+  .metric-card .m-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; }
+  .metric-card .m-value { font-size: 32px; font-weight: 700; margin-top: 4px; letter-spacing: -0.5px; }
+  .metric-card .m-change { font-size: 13px; margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+  .metric-card .m-change.up { color: var(--green); }
+  .metric-card .m-change.down { color: var(--red); }
+  .metric-card .m-change.neutral { color: var(--gray); }
+  .metric-card .m-footnote { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
   .metric-card.accent { border-left-color: var(--accent); }
   .metric-card.green { border-left-color: var(--green); }
-  .metric-card.orange { border-left-color: var(--accent); }
-  .metric-card.purple { border-left-color: #7c3aed; }
-  .metric-card.teal { border-left-color: #0891b2; }
+  .metric-card.purple { border-left-color: var(--purple); }
+  .metric-card.teal { border-left-color: var(--teal); }
+  .metric-card.red { border-left-color: var(--red); }
+
+  /* Insight cards */
+  .insight {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: var(--shadow);
+  }
+  .insight .i-icon { font-size: 24px; flex-shrink: 0; line-height: 1.4; }
+  .insight .i-content { flex: 1; }
+  .insight .i-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .insight .i-body { font-size: 13.5px; line-height: 1.6; color: var(--text); }
+  .insight .i-body strong { color: var(--text); }
+  .insight.green { background: var(--green-bg); border-left: 4px solid var(--green); }
+  .insight.red { background: var(--red-bg); border-left: 4px solid var(--red); }
+  .insight.amber { background: var(--amber-bg); border-left: 4px solid var(--amber); }
+  .insight.blue { background: var(--primary-light); border-left: 4px solid var(--primary); }
+  .insight.purple { background: var(--purple-bg); border-left: 4px solid var(--purple); }
+  .insight.teal { background: var(--teal-bg); border-left: 4px solid var(--teal); }
 
   /* Section */
   .section {
@@ -115,11 +156,11 @@
   .chart-wrap.tall { min-height: 420px; }
   .chart-wrap.short { min-height: 200px; }
 
-  /* Grid layouts */
+  /* Grid */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 
-  /* Filter controls */
+  /* Filter bar */
   .filter-bar {
     display: flex;
     gap: 8px;
@@ -135,17 +176,20 @@
     cursor: pointer;
     transition: all 0.12s;
   }
-  .filter-bar select:hover, .filter-bar button:hover {
-    border-color: var(--primary);
-  }
-  .filter-bar button.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-  }
-  .filter-bar button {
+  .filter-bar select:hover, .filter-bar button:hover { border-color: var(--primary); }
+  .filter-bar button.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .filter-bar button { font-weight: 500; }
+  .btn-export {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    background: white;
+    cursor: pointer;
     font-weight: 500;
+    transition: all 0.12s;
   }
+  .btn-export:hover { border-color: var(--primary); color: var(--primary); }
 
   /* Data table */
   .data-table-wrap {
@@ -183,51 +227,8 @@
   table.data-table .pos { color: var(--green); }
   table.data-table .neg { color: var(--red); }
 
-  /* Responsive */
-  @media (max-width: 900px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .header { padding: 20px 16px; }
-    .header h1 { font-size: 22px; }
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-    .metric-card .value { font-size: 26px; }
-  }
-  @media (max-width: 500px) {
-    .metrics-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Tab buttons */
-  .tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--bg);
-    border-radius: 10px;
-    padding: 3px;
-  }
-  .tabs button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.15s;
-    color: var(--text-muted);
-  }
-  .tabs button.active {
-    background: white;
-    color: var(--text);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  .tabs button:not(.active):hover { color: var(--text); }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-
-  /* Age groups */
-  .age-bar-grid {
-    display: grid;
-    gap: 6px;
-  }
+  /* Age bars */
+  .age-bar-grid { display: grid; gap: 6px; }
   .age-bar-row {
     display: grid;
     grid-template-columns: 170px 1fr 70px;
@@ -249,7 +250,49 @@
   }
   .age-bar-row .aval { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  /* Footnote */
+  /* Risk grid */
+  .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .risk-card {
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .risk-card .r-icon { font-size: 20px; flex-shrink: 0; }
+  .risk-card .r-title { font-weight: 600; font-size: 14px; }
+  .risk-card .r-body { font-size: 12.5px; margin-top: 3px; line-height: 1.5; }
+  .risk-card.high { background: var(--red-bg); }
+  .risk-card.medium { background: var(--amber-bg); }
+  .risk-card.low { background: var(--teal-bg); }
+
+  /* Question card */
+  .q-list { display: grid; gap: 10px; }
+  .q-item {
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    font-size: 14px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .q-item .q-num {
+    background: var(--accent);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
   .footnote {
     font-size: 12px;
     color: var(--text-muted);
@@ -258,30 +301,17 @@
     border-top: 1px solid var(--border);
   }
 
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .risk-grid { grid-template-columns: 1fr; }
+    .header { padding: 20px 16px; }
+    .header h1 { font-size: 22px; }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .metric-card .m-value { font-size: 26px; }
+    .age-bar-row { grid-template-columns: 130px 1fr 60px; }
   }
-  .section { animation: fadeUp 0.4s ease forwards; }
-  .section:nth-child(2) { animation-delay: 0.05s; }
-  .section:nth-child(3) { animation-delay: 0.1s; }
-  .section:nth-child(4) { animation-delay: 0.15s; }
-  .section:nth-child(5) { animation-delay: 0.2s; }
-  .section:nth-child(6) { animation-delay: 0.25s; }
-  .section:nth-child(7) { animation-delay: 0.3s; }
-
-  .btn-export {
-    padding: 6px 14px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 12px;
-    background: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.12s;
+  @media (max-width: 500px) {
+    .metrics-grid { grid-template-columns: 1fr; }
   }
-  .btn-export:hover { border-color: var(--primary); color: var(--primary); }
 </style>
 </head>
 <body>
@@ -291,43 +321,76 @@
     <h1>🏙️ Befolkningsdashboard · Hvidovre Kommune</h1>
     <div class="subtitle">
       Kilde: Danmarks Statistik · FOLK1AM · Data opdateret: april 2026
-      <span class="badge" style="margin-left:12px">Økonomi &amp; planlægning</span>
+      — Analyse målrettet kommunal økonomi og politik
+    </div>
+    <div class="tags">
+      <span class="tag">📈 Befolkningsvækst</span>
+      <span class="tag">👥 Aldersfordeling</span>
+      <span class="tag">💰 Forsørgerbyrde</span>
+      <span class="tag">🏘️ Nabosammenligning</span>
+      <span class="tag">📋 Budgetplanlægning</span>
     </div>
   </div>
 </div>
 
 <div class="container" id="app">
 
+  <!-- ============================================ -->
   <!-- KEY METRICS -->
+  <!-- ============================================ -->
   <div class="metrics-grid" id="metricsGrid">
     <div class="metric-card">
-      <div class="label">Befolkning (apr 2026)</div>
-      <div class="value" id="mCurrent">54.152</div>
-      <div class="change" id="mYoY"></div>
+      <div class="m-label">🧑 Befolkning (apr 2026)</div>
+      <div class="m-value" id="mCurrent">54.152</div>
+      <div class="m-change" id="mYoY"></div>
+      <div class="m-footnote">Seneste opgørelse</div>
     </div>
     <div class="metric-card accent">
-      <div class="label">Ændring i år (YTD)</div>
-      <div class="value" id="mYtd"></div>
-      <div class="change" id="mYtdDetail"></div>
+      <div class="m-label">📉 Ændring i år (YTD)</div>
+      <div class="m-value" id="mYtd"></div>
+      <div class="m-change" id="mYtdDetail"></div>
+      <div class="m-footnote">4 ud af 4 måneder i 2026 har vist fald</div>
     </div>
     <div class="metric-card green">
-      <div class="label">Årlig vækstrate</div>
-      <div class="value" id="mGrowth"></div>
-      <div class="change">siden apr 2025</div>
+      <div class="m-label">📊 Årlig vækstrate</div>
+      <div class="m-value" id="mGrowth"></div>
+      <div class="m-change neutral">siden apr 2025</div>
+      <div class="m-footnote">Laveste i sammenligningsgruppen</div>
     </div>
     <div class="metric-card purple">
-      <div class="label">Forsørgerbyrde</div>
-      <div class="value" id="mDepRatio"></div>
-      <div class="change">børn+ældre pr. 100 i arbejdsdygtig alder</div>
+      <div class="m-label">⚖️ Forsørgerbyrde</div>
+      <div class="m-value" id="mDepRatio"></div>
+      <div class="m-change">børn+ældre pr. 100 i arbejdsdygtig alder</div>
+      <div class="m-footnote">Stigende — især ældreandelen</div>
     </div>
     <div class="metric-card teal">
-      <div class="label">Arbejdsstyrke (16-64 år)</div>
-      <div class="value" id="mWorkforce"></div>
-      <div class="change" id="mWorkforcePct">af befolkningen</div>
+      <div class="m-label">💼 Arbejdsstyrke (16-64 år)</div>
+      <div class="m-value" id="mWorkforce"></div>
+      <div class="m-change" id="mWorkforcePct">af befolkningen</div>
+      <div class="m-footnote">Solidt grundlag, men aldrende</div>
     </div>
   </div>
 
-  <!-- ROW 1: Trend + Monthly changes -->
+  <!-- ============================================ -->
+  <!-- HOVEDINDSIGT -->
+  <!-- ============================================ -->
+  <div class="insight amber">
+    <div class="i-icon">🔔</div>
+    <div class="i-content">
+      <div class="i-title">Hovedbudskab: Vækst i 2025 — fald i 2026</div>
+      <div class="i-body">
+        Hvidovre oplevede en markant befolkningsvækst på <strong>+546 personer</strong> i 2025 — det højeste i perioden.
+        Men de første 4 måneder af 2026 viser et <strong>samlet fald på −76</strong>. Samtidig vokser nabokommunerne
+        markant hurtigere: Brøndby <strong>+15,7%</strong>, Herlev <strong>+11,4%</strong> og Rødovre <strong>+9,5%</strong>
+        siden 2021 — mod Hvidovres <strong>+1,6%</strong>. Den lave relative vækst bør vække politisk opmærksomhed,
+        da det påvirker skattegrundlaget og den langsigtede økonomiske bæredygtighed.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ROW 1: Trend + Monthly -->
+  <!-- ============================================ -->
   <div class="grid-2">
     <div class="section">
       <div class="section-header">
@@ -342,6 +405,19 @@
         </div>
       </div>
       <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+      <div class="insight green" style="margin-top:12px;margin-bottom:0">
+        <div class="i-icon">📌</div>
+        <div class="i-content">
+          <div class="i-title">2025 — et usædvanligt år</div>
+          <div class="i-body">
+            Fra maj til december 2025 voksede Hvidovre med <strong>+549 personer</strong> på 8 måneder.
+            Til sammenligning var væksten i januar–april 2025 så godt som nul. Den pludselige acceleration
+            i anden halvdel af året afviger markant fra mønstret i 2022–2024. Årsagen bør undersøges:
+            skyldes det <strong>nye boligprojekter, tilflytning eller ændret registreringspraksis</strong>?
+            Hvis væksten kan forklares og gentages, er der potentiale for fortsat positiv udvikling.
+          </div>
+        </div>
+      </div>
     </div>
     <div class="section">
       <div class="section-header">
@@ -356,35 +432,95 @@
         </div>
       </div>
       <div class="chart-wrap short"><canvas id="chartMonthlyChange"></canvas></div>
-      <div class="footnote">Positive = vækst, negative = fald</div>
+      <div class="insight red" style="margin-top:12px;margin-bottom:0">
+        <div class="i-icon">⚠️</div>
+        <div class="i-content">
+          <div class="i-title">2026 — fire måneder med fald</div>
+          <div class="i-body">
+            Januar–april 2026 viser <strong>negative nettotal</strong> hver måned.
+            Faldet er beskedent (−0,14%), men tendensen er entydig og større end
+            sæsonudsvingene i samme periode de foregående år. Det er <strong>for tidligt at konkludere
+            en strukturel nedgang</strong>, men udviklingen bør følges nøje i de kommende måneder.
+            Hvis befolkningen ikke stiger igen fra maj/juni, er der grund til bekymring.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ROW 2: Age groups + Age pyramid -->
+  <!-- ============================================ -->
+  <!-- ALDERSGRUPPER + PYRAMIDE -->
+  <!-- ============================================ -->
   <div class="grid-2">
     <div class="section">
       <div class="section-header">
         <h2><span class="icon">👥</span> Aldersgrupper (apr 2026)</h2>
-        <span class="hint">Budgetrelevante grupper</span>
+        <span class="hint">Budgetrelevante inddelinger</span>
       </div>
       <div id="ageGroupBars"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <div style="background:var(--green-bg);padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--green)" id="dChildren">0</div>
+          <div style="font-size:11px;color:var(--text-muted)">Børn 0-15 år<br><span id="dChildrenPct"></span></div>
+        </div>
+        <div style="background:var(--primary-light);padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--primary)" id="dWorking">0</div>
+          <div style="font-size:11px;color:var(--text-muted)">Arbejdsstyrke 16-64 år<br><span id="dWorkingPct"></span></div>
+        </div>
+        <div style="background:var(--purple-bg);padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--purple)" id="dElderly">0</div>
+          <div style="font-size:11px;color:var(--text-muted)">Ældre 65+ år<br><span id="dElderlyPct"></span></div>
+        </div>
+        <div style="background:var(--amber-bg);padding:12px;border-radius:8px;text-align:center">
+          <div style="font-size:20px;font-weight:700;color:var(--amber)" id="dDep">0</div>
+          <div style="font-size:11px;color:var(--text-muted)">Forsørgerbyrde<br>pr. 100 i arbejde</div>
+        </div>
+      </div>
+      <div class="insight amber" style="margin-top:12px;margin-bottom:0">
+        <div class="i-icon">⏰</div>
+        <div class="i-content">
+          <div class="i-title">Demografisk tikkende bombe</div>
+          <div class="i-body">
+            Gruppen <strong>40–64 år</strong> udgør 32,5% af befolkningen — den største aldersgruppe.
+            Når denne årgang begynder at gå på pension <strong>(fra ca. 2030)</strong>, vil forsørgerbyrden
+            stige markant. De <strong>65–69-årige</strong> (3.031 personer) er langt flere end
+            75–79-årige (1.695), hvilket betyder at presset på <strong>ældreplejen vil vokse kraftigt
+            om 5–10 år</strong>. Allerede nu tegner ældreområdet sig for en voksende andel af budgettet.
+          </div>
+        </div>
+      </div>
       <div class="footnote">
-        <strong>Dagtilbud:</strong> 0-2 år (vuggestue) · 3-5 år (børnehave) ·
-        <strong>Skole:</strong> 6-15 år ·
-        <strong>Arbejdsmarked:</strong> 16-64 år ·
-        <strong>Ældrepleje:</strong> 65+ år
+        <strong>Dagtilbud:</strong> 0–2 år (vuggestue: 1.602) · 3–5 år (børnehave: 1.909) ·
+        <strong>Skole:</strong> 6–15 år (6.891) ·
+        <strong>Arbejde:</strong> 16–64 år (33.911) ·
+        <strong>Ældre:</strong> 65+ år (9.839)
       </div>
     </div>
     <div class="section">
       <div class="section-header">
         <h2><span class="icon">🌲</span> Befolkningspyramide</h2>
-        <span class="hint">Aldersfordeling pr. 1-års alder</span>
+        <span class="hint">Pr. 1-års alder, april 2026</span>
       </div>
       <div class="chart-wrap tall"><canvas id="chartPyramid"></canvas></div>
+      <div class="insight blue" style="margin-top:12px;margin-bottom:0">
+        <div class="i-icon">🔍</div>
+        <div class="i-content">
+          <div class="i-title">Læs pyramiden</div>
+          <div class="i-body">
+            <strong>Bred base (0–15 år):</strong> 10.402 børn. Store årgange i skolealderen (5–15 år) lægger pres på skolekapaciteten.
+            <strong>Midten (25–44 år):</strong> stor og stabil — skattegrundlaget.
+            <strong>Toppen (65+ år):</strong> voksende. Særligt gruppen 60–69 år er stor og vil om få år
+            lægge beslag på flere ældrepleje-ressourcer. <strong>Konsekvens:</strong> Omstilling af
+            budgettet fra dagtilbud/skole mod ældreområdet er en politisk nødvendighed i de kommende år.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ROW 3: Comparison + dependency -->
+  <!-- ============================================ -->
+  <!-- NABOER + VÆKST -->
+  <!-- ============================================ -->
   <div class="grid-2">
     <div class="section">
       <div class="section-header">
@@ -392,26 +528,199 @@
         <span class="hint">Relativ udvikling</span>
       </div>
       <div class="chart-wrap"><canvas id="chartComparison"></canvas></div>
+      <div class="insight red" style="margin-top:12px;margin-bottom:0">
+        <div class="i-icon">🚨</div>
+        <div class="i-content">
+          <div class="i-title">Hvidovre sakker bagud</div>
+          <div class="i-body">
+            Siden 2021 er Hvidovre vokset med <strong>kun 1,6%</strong>. Til sammenligning:
+            Brøndby +15,7%, Herlev +11,4%, Ballerup +9,6%, Rødovre +9,5%.
+            Forskellen mellem Hvidovre og Rødovre alene svarer til <strong>ca. 3.900 flere indbyggere
+            i Rødovre</strong> over perioden — eller ca. 1.000 om året.
+            Det har <strong>direkte betydning for skattegrundlaget og dermed serviceniveauet</strong>.
+            Spørgsmålet er: skyldes forskellen <strong>boligpolitik, byudvikling, infrastruktur
+            eller manglende attraktivitet</strong> for børnefamilier og erhvervsliv?
+          </div>
+        </div>
+      </div>
       <div class="footnote">
-        Basis = oktober 2021. Værdier over 100 = relativ befolkningstilvækst siden da.
+        Basis = oktober 2021. Værdier over 100 = befolkningstilvækst.
         Brøndby (153), Rødovre (175), Ballerup (151), Gladsaxe (159), Herlev (163)
       </div>
     </div>
     <div class="section">
       <div class="section-header">
-        <h2><span class="icon">⚖️</span> Forsørgerbyrde over tid</h2>
-        <span class="hint">Pr. 100 i arbejdsdygtig alder (16-64)</span>
+        <h2><span class="icon">📊</span> Årlig vækst + befolkning</h2>
+        <span class="hint">Kvartalsvis, annualiseret</span>
       </div>
       <div class="chart-wrap"><canvas id="chartDependency"></canvas></div>
-      <div class="footnote">
-        <strong>Samlet forsørgerbyrde:</strong> (0-15 år + 65+ år) / (16-64 år) × 100.
-        <strong>Aldersforsørgerbyrde:</strong> 65+ / 16-64 × 100.
-        Jo højere tal, desto flere borgere pr. person i arbejdsstyrken.
+      <div class="insight purple" style="margin-top:12px;margin-bottom:0">
+        <div class="i-icon">🧮</div>
+        <div class="i-content">
+          <div class="i-title">Udligning og vækstincitamenter</div>
+          <div class="i-body">
+            Den kommunale udligning betyder, at <strong>vækst ikke automatisk giver flere penge
+            i kassen</strong>. Faktisk kan høj vækst i nogle tilfælde betyde, at kommunen mister
+            tilskud. Men <strong>lav eller negativ vækst</strong> er heller ikke holdbar på lang sigt
+            — færre skatteydere og højere andel af ældre skaber et stigende pres på økonomien.
+            Balancen mellem at tiltrække nye borgere og samtidig have en bæredygtig økonomi
+            er helt central for Hvidovres fremtidige handlefrihed.
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ROW 4: Data table -->
+  <!-- ============================================ -->
+  <!-- RISIKOVURDERING -->
+  <!-- ============================================ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="icon">⚠️</span> Risikovurdering for Hvidovre Kommunes økonomi</h2>
+      <span class="hint">På baggrund af demografiske data</span>
+    </div>
+    <div class="risk-grid">
+      <div class="risk-card high">
+        <div class="r-icon">🔴</div>
+        <div>
+          <div class="r-title">Pensionsbølgen 2030–2045</div>
+          <div class="r-body">
+            De store årgange (40–64 år = 17.625 personer) nærmer sig pension.
+            Når de forlader arbejdsmarkedet, stiger forsørgerbyrden voldsomt.
+            <strong>Påvirkning:</strong> Fald i skatteindtægter, stigning i ældreplejeudgifter.
+            <strong>Tidshorisont:</strong> 5–15 år.
+          </div>
+        </div>
+      </div>
+      <div class="risk-card high">
+        <div class="r-icon">🔴</div>
+        <div>
+          <div class="r-title">Lav befolkningstilvækst vs. naboer</div>
+          <div class="r-body">
+            Hvidovre vokser markant langsommere end samtlige nabokommuner undtagen Gladsaxe.
+            Over tid udhuler det skattegrundlaget relativt til regionen.
+            <strong>Påvirkning:</strong> Svækket konkurrenceevne, færre ressourcer til velfærd.
+            <strong>Tidshorisont:</strong> Løbende — allerede synligt.
+          </div>
+        </div>
+      </div>
+      <div class="risk-card medium">
+        <div class="r-icon">🟡</div>
+        <div>
+          <div class="r-title">Ældreplejens kapacitet</div>
+          <div class="r-body">
+            9.839 ældre (65+) i dag — men gruppen 65–69 år (3.031) er dobbelt så stor
+            som 75–79 år (1.695). Når de store årgange rykker op, vil behovet for
+            hjemmepleje og plejehjemspladser vokse dramatisk.
+            <strong>Påvirkning:</strong> Markant merudgift til ældreområdet.
+            <strong>Tidshorisont:</strong> 5–10 år.
+          </div>
+        </div>
+      </div>
+      <div class="risk-card medium">
+        <div class="r-icon">🟡</div>
+        <div>
+          <div class="r-title">Rekruttering af arbejdskraft</div>
+          <div class="r-body">
+            Med en aldrende befolkning bliver det sværere at rekruttere til både
+            private og offentlige stillinger — især sosu-assistenter, pædagoger,
+            sygeplejersker og lærere.
+            <strong>Påvirkning:</strong> Lønomkostninger, mangel på kvalificeret personale.
+            <strong>Tidshorisont:</strong> Allerede mærkbar — accelererer.
+          </div>
+        </div>
+      </div>
+      <div class="risk-card low">
+        <div class="r-icon">🟢</div>
+        <div>
+          <div class="r-title">Kortsigtet sæsonudsving i 2026</div>
+          <div class="r-body">
+            Faldet i 2026 YTD (−76) kan være et sæsonmæssigt udsving og ikke en
+            strukturel tendens. Det følger mønstret fra tidligere år, men er lidt
+            større end normalt.
+            <strong>Påvirkning:</strong> Minimal på kort sigt.
+            <strong>Tidshorisont:</strong> Afklares i løbet af 3–4 måneder.
+          </div>
+        </div>
+      </div>
+      <div class="risk-card low">
+        <div class="r-icon">🟢</div>
+        <div>
+          <div class="r-title">Stor arbejdsstyrke buffer</div>
+          <div class="r-body">
+            Med 62,6% af befolkningen i den erhvervsaktive alder har Hvidovre
+            et solidt skattegrundlag, der kan absorbere moderate demografiske ændringer.
+            <strong>Påvirkning:</strong> Positiv — giver handlefrihed.
+            <strong>Tidshorisont:</strong> De næste 5–7 år.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SPØRGSMÅL TIL DIREKTIONEN -->
+  <!-- ============================================ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="icon">❓</span> Politiske spørgsmål som dataene rejser</h2>
+      <span class="hint">Til drøftelse i direktionen</span>
+    </div>
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">1</div>
+        <div>
+          <strong>Hvorfor vokser Hvidovre langsommere end naboerne?</strong><br>
+          Er det boligpolitik, erhvervsudvikling, infrastruktur eller image?
+          Hvad kan gøres for at vende udviklingen?
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">2</div>
+        <div>
+          <strong>Hvad drev væksten i 2025 — og kan den gentages?</strong><br>
+          Var det midlertidige boligprojekter eller strukturelle forhold?
+          Bør kommunen investere i at fastholde momentum?
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">3</div>
+        <div>
+          <strong>Skal skatteindtægtsprognoserne justeres i lyset af 2026-faldet?</strong><br>
+          Faldet er lille, men konsekvent. Hvad er konsekvensen for indeværende års budget?
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">4</div>
+        <div>
+          <strong>Er skole- og dagtilbudskapaciteten dimensioneret til de aktuelle årgange?</strong><br>
+          Store årgange i alderen 5–15 år lægger pres på skolevæsenet.
+          Skal der planlægges udvidelser?
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">5</div>
+        <div>
+          <strong>Hvornår skal der handles på ældrebølgen?</strong><br>
+          Med 9.800 ældre i dag, der bliver til 12.000+ om 10 år —
+          er planlægning af plejekapacitet, personale og budget en
+          politisk nødvendighed allerede nu?
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">6</div>
+        <div>
+          <strong>Hvordan påvirker den kommunale udligning incitamenterne til vækst?</strong><br>
+          Giver udligningssystemet mening for Hvidovre, eller straffer det
+          kommuner der investerer i vækst?
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- DATA TABLE -->
+  <!-- ============================================ -->
   <div class="section">
     <div class="section-header">
       <h2><span class="icon">📋</span> Rådata — månedlige befolkningstal</h2>
@@ -425,7 +734,7 @@
             <th>Befolkning</th>
             <th>Ændring</th>
             <th>Ændring %</th>
-            <th>År-til-dato</th>
+            <th>YTD</th>
             <th>År-over-år</th>
           </tr>
         </thead>
@@ -434,15 +743,22 @@
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- ============================================ -->
+  <!-- FOOTER -->
+  <!-- ============================================ -->
   <div class="section" style="text-align:center;font-size:13px;color:var(--text-muted);padding:16px;">
     <p>
       <strong>Kilde:</strong> Danmarks Statistik, tabel FOLK1AM (befolkning pr. måned) ·
       <strong>Seneste opdatering:</strong> april 2026 ·
-      Dashboard genereret automatisk fra DST's åbne API
+      API: <code>api.statbank.dk</code>
     </p>
     <p style="margin-top:4px;">
-      API: <code>https://api.statbank.dk/v1/data/FOLK1AM/CSV</code>
+      Dashboard og analyse udarbejdet på baggrund af offentligt tilgængelige data.
+      Indeholder ikke Hvidovre Kommunes officielle holdning eller politik.
+    </p>
+    <p style="margin-top:8px;font-size:11px;">
+      <a href="https://github.com/henrikastrup1/hvidovre-befolkningsdashboard" target="_blank" style="color:var(--primary)">GitHub</a>
+      · Opdateres manuelt ved nye data fra DST
     </p>
   </div>
 
@@ -491,11 +807,10 @@ const AGE_DIST = [
   [97,19],[98,13],[99,13],[100,3],[101,4],[102,1],[103,0],[104,1]
 ];
 
-// 5-year age groups for pyramid
+// 5-year groups
 const PYRAMID_GROUPS = [];
 for (let start = 0; start <= 100; start += 5) {
-  let total = 0;
-  let count = 0;
+  let total = 0, count = 0;
   for (const [a, v] of AGE_DIST) {
     if (a >= start && a < start + 5) { total += v; count++; }
   }
@@ -524,36 +839,11 @@ const KOMMUNER = [
 
 const KOMMUNE_DATA = {
   'Hvidovre': HVIDOVRE_TOTAL,
-  'Brøndby': [
-    ['2021M10',35501],['2022M01',35651],['2022M04',35850],['2022M07',36161],['2022M10',36610],
-    ['2023M01',37128],['2023M04',37519],['2023M07',37899],['2023M10',38652],['2024M01',39067],
-    ['2024M04',39400],['2024M07',39657],['2024M10',40180],['2025M01',40401],['2025M04',40517],
-    ['2025M07',40576],['2025M10',40663],['2026M01',40990],['2026M04',41059]
-  ],
-  'Rødovre': [
-    ['2021M10',41219],['2022M01',41382],['2022M04',41478],['2022M07',41649],['2022M10',42408],
-    ['2023M01',42563],['2023M04',43107],['2023M07',43594],['2023M10',43925],['2024M01',44328],
-    ['2024M04',44512],['2024M07',44637],['2024M10',44646],['2025M01',44734],['2025M04',44897],
-    ['2025M07',44999],['2025M10',45074],['2026M01',45138],['2026M04',45139]
-  ],
-  'Ballerup': [
-    ['2021M10',49259],['2022M01',49274],['2022M04',49422],['2022M07',49623],['2022M10',49854],
-    ['2023M01',50039],['2023M04',50141],['2023M07',50474],['2023M10',50812],['2024M01',51237],
-    ['2024M04',51619],['2024M07',52103],['2024M10',52517],['2025M01',52939],['2025M04',53398],
-    ['2025M07',53657],['2025M10',53840],['2026M01',53950],['2026M04',53988]
-  ],
-  'Gladsaxe': [
-    ['2021M10',69135],['2022M01',69259],['2022M04',69264],['2022M07',69520],['2022M10',69887],
-    ['2023M01',70001],['2023M04',70067],['2023M07',70322],['2023M10',70573],['2024M01',70600],
-    ['2024M04',70681],['2024M07',70902],['2024M10',71046],['2025M01',70958],['2025M04',70894],
-    ['2025M07',70882],['2025M10',71135],['2026M01',71185],['2026M04',70949]
-  ],
-  'Herlev': [
-    ['2021M10',28868],['2022M01',28867],['2022M04',28807],['2022M07',28864],['2022M10',29027],
-    ['2023M01',29215],['2023M04',29332],['2023M07',29318],['2023M10',29533],['2024M01',29876],
-    ['2024M04',30037],['2024M07',30177],['2024M10',30378],['2025M01',30784],['2025M04',31145],
-    ['2025M07',31535],['2025M10',31856],['2026M01',32030],['2026M04',32147]
-  ]
+  'Brøndby': [['2021M10',35501],['2022M01',35651],['2022M04',35850],['2022M07',36161],['2022M10',36610],['2023M01',37128],['2023M04',37519],['2023M07',37899],['2023M10',38652],['2024M01',39067],['2024M04',39400],['2024M07',39657],['2024M10',40180],['2025M01',40401],['2025M04',40517],['2025M07',40576],['2025M10',40663],['2026M01',40990],['2026M04',41059]],
+  'Rødovre': [['2021M10',41219],['2022M01',41382],['2022M04',41478],['2022M07',41649],['2022M10',42408],['2023M01',42563],['2023M04',43107],['2023M07',43594],['2023M10',43925],['2024M01',44328],['2024M04',44512],['2024M07',44637],['2024M10',44646],['2025M01',44734],['2025M04',44897],['2025M07',44999],['2025M10',45074],['2026M01',45138],['2026M04',45139]],
+  'Ballerup': [['2021M10',49259],['2022M01',49274],['2022M04',49422],['2022M07',49623],['2022M10',49854],['2023M01',50039],['2023M04',50141],['2023M07',50474],['2023M10',50812],['2024M01',51237],['2024M04',51619],['2024M07',52103],['2024M10',52517],['2025M01',52939],['2025M04',53398],['2025M07',53657],['2025M10',53840],['2026M01',53950],['2026M04',53988]],
+  'Gladsaxe': [['2021M10',69135],['2022M01',69259],['2022M04',69264],['2022M07',69520],['2022M10',69887],['2023M01',70001],['2023M04',70067],['2023M07',70322],['2023M10',70573],['2024M01',70600],['2024M04',70681],['2024M07',70902],['2024M10',71046],['2025M01',70958],['2025M04',70894],['2025M07',70882],['2025M10',71135],['2026M01',71185],['2026M04',70949]],
+  'Herlev': [['2021M10',28868],['2022M01',28867],['2022M04',28807],['2022M07',28864],['2022M10',29027],['2023M01',29215],['2023M04',29332],['2023M07',29318],['2023M10',29533],['2024M01',29876],['2024M04',30037],['2024M07',30177],['2024M10',30378],['2025M01',30784],['2025M04',31145],['2025M07',31535],['2025M10',31856],['2026M01',32030],['2026M04',32147]]
 };
 
 // ============================================================
@@ -569,11 +859,10 @@ function fmtPeriod(p) {
 function fmtPeriodFull(p) {
   if (!p || !p.includes('M')) return p || '';
   const [y, m] = p.split('M');
-  const months = ['','januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
-  return months[+m] + ' ' + y;
+  const ms = ['','januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];
+  return ms[+m] + ' ' + y;
 }
 function fmtNum(n) { return n.toLocaleString('da-DK'); }
-
 function filterRange(data, range) {
   if (range === 'all') return data;
   const now = new Date();
@@ -581,15 +870,10 @@ function filterRange(data, range) {
   const cutoff = new Date(now.getFullYear() - years[range], now.getMonth(), 1);
   return data.filter(([t]) => {
     const [y, m] = t.split('M');
-    const d = new Date(+y, +m - 1, 1);
-    return d >= cutoff;
+    return new Date(+y, +m - 1, 1) >= cutoff;
   });
 }
-
-function fmtPct(v) {
-  const s = v.toFixed(1);
-  return (v >= 0 ? '+' : '') + s + '%';
-}
+function fmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; }
 
 // ============================================================
 // KEY METRICS
@@ -597,18 +881,12 @@ function fmtPct(v) {
 
 function updateMetrics() {
   const latest = HVIDOVRE_TOTAL[HVIDOVRE_TOTAL.length - 1][1];
-  const prevMonth = HVIDOVRE_TOTAL[HVIDOVRE_TOTAL.length - 2][1];
   const yrAgo = HVIDOVRE_TOTAL.find(([t]) => t === '2025M04')[1];
-
-  // YTD: compare 2026M04 to 2026M01
   const ytdStart = HVIDOVRE_TOTAL.find(([t]) => t === '2026M01')[1];
   const ytdChange = latest - ytdStart;
-
-  // YoY
   const yoyChange = latest - yrAgo;
   const yoyPct = (yoyChange / yrAgo) * 100;
 
-  // Growth rate (annualized from monthly average)
   const monthlyChanges = [];
   for (let i = 1; i < HVIDOVRE_TOTAL.length; i++) {
     monthlyChanges.push(HVIDOVRE_TOTAL[i][1] - HVIDOVRE_TOTAL[i-1][1]);
@@ -616,7 +894,6 @@ function updateMetrics() {
   const avgMonthly = monthlyChanges.reduce((a,b) => a+b, 0) / monthlyChanges.length;
   const annualizedGrowth = (avgMonthly / (latest - avgMonthly * 6)) * 12 * 100;
 
-  // Dependency ratio
   const children = AGE_DIST.filter(([a]) => a >= 0 && a <= 15).reduce((s, [_,v]) => s+v, 0);
   const working = AGE_DIST.filter(([a]) => a >= 16 && a <= 64).reduce((s, [_,v]) => s+v, 0);
   const elderly = AGE_DIST.filter(([a]) => a >= 65).reduce((s, [_,v]) => s+v, 0);
@@ -624,18 +901,24 @@ function updateMetrics() {
 
   document.getElementById('mCurrent').textContent = fmtNum(latest);
   document.getElementById('mYtd').textContent = (ytdChange >= 0 ? '+' : '') + fmtNum(ytdChange);
-  document.getElementById('mYtdDetail').textContent = `${(ytdChange/ytdStart*100).toFixed(2)}% af start`;
   document.getElementById('mYtd').style.color = ytdChange >= 0 ? 'var(--green)' : 'var(--red)';
-
+  document.getElementById('mYtdDetail').textContent = `${(ytdChange/ytdStart*100).toFixed(2)}% af start`;
   const yoyEl = document.getElementById('mYoY');
   yoyEl.textContent = `${yoyChange >= 0 ? '+' : ''}${fmtNum(yoyChange)} (${fmtPct(yoyPct)}) år-over-år`;
-  yoyEl.className = `change ${yoyChange >= 0 ? 'up' : 'down'}`;
-
+  yoyEl.className = `m-change ${yoyChange >= 0 ? 'up' : 'down'}`;
   document.getElementById('mGrowth').textContent = fmtPct(annualizedGrowth);
-
   document.getElementById('mDepRatio').textContent = depRatio;
   document.getElementById('mWorkforce').textContent = fmtNum(working);
   document.getElementById('mWorkforcePct').textContent = `${(working/latest*100).toFixed(1)}% af befolkningen`;
+
+  // Demographics cards
+  document.getElementById('dChildren').textContent = fmtNum(children);
+  document.getElementById('dChildrenPct').textContent = (children/latest*100).toFixed(1) + '%';
+  document.getElementById('dWorking').textContent = fmtNum(working);
+  document.getElementById('dWorkingPct').textContent = (working/latest*100).toFixed(1) + '%';
+  document.getElementById('dElderly').textContent = fmtNum(elderly);
+  document.getElementById('dElderlyPct').textContent = (elderly/latest*100).toFixed(1) + '%';
+  document.getElementById('dDep').textContent = depRatio;
 }
 
 // ============================================================
@@ -644,24 +927,20 @@ function updateMetrics() {
 
 function renderAgeBars() {
   const container = document.getElementById('ageGroupBars');
-  const groups = AGE_GROUPS_BUDGET.map(g => {
-    const total = AGE_DIST.filter(([a]) => a >= g.lo && a <= g.hi).reduce((s, [_,v]) => s+v, 0);
-    return { ...g, total };
-  });
+  const groups = AGE_GROUPS_BUDGET.map(g => ({
+    ...g,
+    total: AGE_DIST.filter(([a]) => a >= g.lo && a <= g.hi).reduce((s, [_,v]) => s+v, 0)
+  }));
   const maxVal = Math.max(...groups.map(g => g.total));
-
   let html = '<div class="age-bar-grid">';
   for (const g of groups) {
     const pct = (g.total / maxVal * 100).toFixed(0);
-    html += `
-      <div class="age-bar-row">
-        <div class="alabel">${g.label}</div>
-        <div>
-          <div class="abar" style="width:${pct}%;background:${g.color}">${fmtNum(g.total)}</div>
-        </div>
-        <div class="aval">${(g.total / HVIDOVRE_TOTAL[HVIDOVRE_TOTAL.length-1][1] * 100).toFixed(1)}%</div>
-      </div>
-    `;
+    const popPct = (g.total / HVIDOVRE_TOTAL[HVIDOVRE_TOTAL.length-1][1] * 100).toFixed(1);
+    html += `<div class="age-bar-row">
+      <div class="alabel">${g.label}</div>
+      <div><div class="abar" style="width:${pct}%;background:${g.color}">${fmtNum(g.total)}</div></div>
+      <div class="aval">${popPct}%</div>
+    </div>`;
   }
   html += '</div>';
   container.innerHTML = html;
@@ -670,20 +949,16 @@ function renderAgeBars() {
 // ============================================================
 // CHARTS
 // ============================================================
-
 let charts = {};
 
-function destroyAll() { for (const k in charts) { charts[k].destroy(); delete charts[k]; } }
-
-// --- TREND CHART ---
+// --- TREND ---
 function buildTrend(range) {
   const data = filterRange(HVIDOVRE_TOTAL, range);
   const labels = data.map(([t]) => fmtPeriod(t));
   const values = data.map(([_,v]) => v);
-
   if (charts['trend']) charts['trend'].destroy();
-
   const ctx = document.getElementById('chartTrend').getContext('2d');
+  Chart.register(ChartAnnotation);
   charts['trend'] = new Chart(ctx, {
     type: 'line',
     data: {
@@ -698,38 +973,37 @@ function buildTrend(range) {
           grad.addColorStop(1, 'rgba(0,85,165,0)');
           return grad;
         },
-        fill: true,
-        tension: 0.3,
-        pointRadius: 3,
-        pointHoverRadius: 6,
-        pointBackgroundColor: '#0055a5',
-        borderWidth: 2.5
+        fill: true, tension: 0.3, pointRadius: 3, pointHoverRadius: 6,
+        pointBackgroundColor: '#0055a5', borderWidth: 2.5
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => fmtNum(ctx.parsed.y) + ' indbyggere'
+        tooltip: { callbacks: { label: (ctx) => fmtNum(ctx.parsed.y) + ' indbyggere' } },
+        annotation: {
+          annotations: {
+            label2025: {
+              type: 'label',
+              position: 'end',
+              xValue: labels.findIndex(l => l.includes('jun') && l.includes('25')),
+              yValue: Math.max(...values) - 50,
+              content: ['★ Vækstår 2025', '+546 personer'],
+              font: { size: 11, weight: 'bold' },
+              color: '#16a34a',
+              backgroundColor: 'rgba(22,163,74,0.1)',
+              borderRadius: 6,
+              xAdjust: -30,
+              yAdjust: -30,
+              display: range !== '1y'
+            }
           }
         }
       },
       scales: {
-        x: {
-          grid: { display: false },
-          ticks: { maxTicksLimit: 20, font: { size: 11 } }
-        },
-        y: {
-          beginAtZero: false,
-          grid: { color: 'rgba(0,0,0,0.06)' },
-          ticks: {
-            callback: (v) => fmtNum(v),
-            font: { size: 11 }
-          }
-        }
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 20, font: { size: 11 } } },
+        y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { callback: (v) => fmtNum(v), font: { size: 11 } } }
       }
     }
   });
@@ -740,45 +1014,30 @@ function buildMonthlyChange(range) {
   const data = filterRange(HVIDOVRE_TOTAL, range);
   const changes = [];
   for (let i = 1; i < data.length; i++) {
-    changes.push({
-      label: fmtPeriod(data[i][0]),
-      change: data[i][1] - data[i-1][1]
-    });
+    changes.push({ label: fmtPeriod(data[i][0]), change: data[i][1] - data[i-1][1] });
   }
-
   if (charts['monthly']) charts['monthly'].destroy();
-
   const ctx = document.getElementById('chartMonthlyChange').getContext('2d');
   charts['monthly'] = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: changes.map(c => c.label),
       datasets: [{
-        label: 'Ændring',
         data: changes.map(c => c.change),
         backgroundColor: changes.map(c => c.change >= 0 ? 'rgba(22,163,74,0.7)' : 'rgba(185,28,28,0.7)'),
         borderColor: changes.map(c => c.change >= 0 ? '#16a34a' : '#b91c1c'),
-        borderWidth: 1,
-        borderRadius: 3
+        borderWidth: 1, borderRadius: 3
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => (ctx.parsed.y >= 0 ? '+' : '') + fmtNum(ctx.parsed.y)
-          }
-        }
+        tooltip: { callbacks: { label: (ctx) => (ctx.parsed.y >= 0 ? '+' : '') + fmtNum(ctx.parsed.y) } }
       },
       scales: {
         x: { grid: { display: false }, ticks: { maxTicksLimit: 20, font: { size: 10 } } },
-        y: {
-          grid: { color: 'rgba(0,0,0,0.06)' },
-          ticks: { callback: (v) => (v >= 0 ? '+' : '') + v, font: { size: 10 } }
-        }
+        y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { callback: (v) => (v >= 0 ? '+' : '') + v, font: { size: 10 } } }
       }
     }
   });
@@ -787,10 +1046,8 @@ function buildMonthlyChange(range) {
 // --- PYRAMID ---
 function buildPyramid() {
   if (charts['pyramid']) charts['pyramid'].destroy();
-
   const labels = PYRAMID_GROUPS.map(g => g.label);
   const values = PYRAMID_GROUPS.map(g => g.value);
-
   const ctx = document.getElementById('chartPyramid').getContext('2d');
   charts['pyramid'] = new Chart(ctx, {
     type: 'bar',
@@ -799,38 +1056,19 @@ function buildPyramid() {
       datasets: [{
         label: 'Borgere',
         data: values,
-        backgroundColor: labels.map((_, i) =>
-          i < 4 ? 'rgba(34,197,94,0.7)' :  // children/young
-          i < 9 ? 'rgba(59,130,246,0.7)' :  // working age
-          i < 13 ? 'rgba(168,85,247,0.7)' :  // middle-old
-          'rgba(236,72,153,0.7)'              // oldest
-        ),
-        borderColor: '#ffffff',
-        borderWidth: 1,
-        borderRadius: 3
+        backgroundColor: labels.map((_, i) => i < 4 ? 'rgba(34,197,94,0.7)' : i < 9 ? 'rgba(59,130,246,0.7)' : i < 13 ? 'rgba(168,85,247,0.7)' : 'rgba(236,72,153,0.7)'),
+        borderColor: '#ffffff', borderWidth: 1, borderRadius: 3
       }]
     },
     options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => fmtNum(ctx.parsed.x) + ' borgere'
-          }
-        }
+        tooltip: { callbacks: { label: (ctx) => fmtNum(ctx.parsed.x) + ' borgere' } }
       },
       scales: {
-        x: {
-          grid: { color: 'rgba(0,0,0,0.06)' },
-          ticks: { callback: (v) => fmtNum(v), font: { size: 10 } }
-        },
-        y: {
-          grid: { display: false },
-          ticks: { font: { size: 11 } }
-        }
+        x: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { callback: (v) => fmtNum(v), font: { size: 10 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 11 } } }
       }
     }
   });
@@ -839,92 +1077,49 @@ function buildPyramid() {
 // --- COMPARISON ---
 function buildComparison() {
   if (charts['comparison']) charts['comparison'].destroy();
-
-  // Interpolate to quarterly for cleaner view
-  const quarters = ['2022M01','2022M04','2022M07','2022M10',
-                    '2023M01','2023M04','2023M07','2023M10',
-                    '2024M01','2024M04','2024M07','2024M10',
-                    '2025M01','2025M04','2025M07','2025M10',
-                    '2026M01','2026M04'];
-
+  const quarters = ['2022M01','2022M04','2022M07','2022M10','2023M01','2023M04','2023M07','2023M10','2024M01','2024M04','2024M07','2024M10','2025M01','2025M04','2025M07','2025M10','2026M01','2026M04'];
   const datasets = KOMMUNER.map(k => {
     const raw = KOMMUNE_DATA[k.navn];
-    const baseVal = raw[0][1]; // first data point
+    const baseVal = raw[0][1];
     const indexed = quarters.map(q => {
       const match = raw.find(([t]) => t === q);
       return match ? ((match[1] / baseVal) * 100) : null;
     }).filter(v => v !== null);
-
     return {
       label: k.navn,
       data: indexed,
       borderColor: k.farve,
       backgroundColor: k.farve + '20',
       tension: 0.3,
-      pointRadius: 2,
-      borderWidth: k.navn === 'Hvidovre' ? 3 : 1.5,
+      pointRadius: k.navn === 'Hvidovre' ? 4 : 2,
+      pointBackgroundColor: k.farve,
+      borderWidth: k.navn === 'Hvidovre' ? 3.5 : 1.5,
       borderDash: k.navn === 'Hvidovre' ? [] : [4, 3]
     };
   });
-
   const ctx = document.getElementById('chartComparison').getContext('2d');
   charts['comparison'] = new Chart(ctx, {
     type: 'line',
     data: { labels: quarters, datasets },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, padding: 12 } },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1)
-          }
-        }
+        tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) } }
       },
       scales: {
         x: { grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 10 } } },
-        y: {
-          grid: { color: 'rgba(0,0,0,0.06)' },
-          ticks: { callback: (v) => v.toFixed(1), font: { size: 10 } }
-        }
+        y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { callback: (v) => v.toFixed(1), font: { size: 10 } } }
       }
     }
   });
 }
 
-// --- DEPENDENCY RATIO ---
+// --- GROWTH + POPULATION ---
 function buildDependency() {
   if (charts['dependency']) charts['dependency'].destroy();
-
-  // Calculate dependency ratio for each year
-  const years = [2022, 2023, 2024, 2025, 2026];
-  const ratios = years.map(y => {
-    const month = y + 'M04'; // April data
-    const totalRow = HVIDOVRE_TOTAL.find(([t]) => t === month);
-    if (!totalRow) return null;
-    return null; // We'll use the age distribution from the latest month instead
-  });
-
-  // Since we only have detailed age data for 2026, let's compute based on assumed structure.
-  // Actually, let's just show the current ratio as a simple metric since age data per year
-  // would need separate API calls. Let me show just the current state and a simple trend.
-  // For the dependency chart, let me approximate using total growth and a fixed age structure.
-
-  // Alternative: show total population vs working age estimate over quarters
-  const quarters = ['2022M01','2022M04','2022M07','2022M10',
-                    '2023M01','2023M04','2023M07','2023M10',
-                    '2024M01','2024M04','2024M07','2024M10',
-                    '2025M01','2025M04','2025M07','2025M10',
-                    '2026M01','2026M04'];
-
-  // We'll show total population on a dual axis with growth rate
-  const popData = quarters.map(q => {
-    const match = HVIDOVRE_TOTAL.find(([t]) => t === q);
-    return match ? match[1] : null;
-  }).filter(v => v !== null);
-
-  // Growth rate (annualized, rolling 4 quarters)
+  const quarters = ['2022M01','2022M04','2022M07','2022M10','2023M01','2023M04','2023M07','2023M10','2024M01','2024M04','2024M07','2024M10','2025M01','2025M04','2025M07','2025M10','2026M01','2026M04'];
+  const popData = quarters.map(q => { const m = HVIDOVRE_TOTAL.find(([t]) => t === q); return m ? m[1] : null; }).filter(v => v !== null);
   const growthData = quarters.map((q, i) => {
     if (i < 4) return null;
     const cur = HVIDOVRE_TOTAL.find(([t]) => t === q);
@@ -932,7 +1127,6 @@ function buildDependency() {
     if (!cur || !prev) return null;
     return ((cur[1] / prev[1]) - 1) * 100;
   });
-
   const ctx = document.getElementById('chartDependency').getContext('2d');
   charts['dependency'] = new Chart(ctx, {
     type: 'bar',
@@ -943,50 +1137,25 @@ function buildDependency() {
         data: growthData,
         backgroundColor: growthData.map(v => v === null ? 'transparent' : v >= 0 ? 'rgba(22,163,74,0.5)' : 'rgba(185,28,28,0.5)'),
         borderColor: growthData.map(v => v === null ? 'transparent' : v >= 0 ? '#16a34a' : '#b91c1c'),
-        borderWidth: 1,
-        borderRadius: 3,
-        order: 1
+        borderWidth: 1, borderRadius: 3, order: 1
       }, {
         label: 'Befolkning (højre akse)',
-        data: popData,
-        type: 'line',
-        borderColor: '#0055a5',
-        backgroundColor: 'rgba(0,85,165,0.1)',
-        fill: true,
-        tension: 0.3,
-        pointRadius: 3,
-        pointBackgroundColor: '#0055a5',
-        borderWidth: 2,
-        yAxisID: 'y1',
-        order: 0
+        data: popData, type: 'line',
+        borderColor: '#0055a5', backgroundColor: 'rgba(0,85,165,0.1)',
+        fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: '#0055a5', borderWidth: 2,
+        yAxisID: 'y1', order: 0
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { position: 'bottom', labels: { font: { size: 11 }, usePointStyle: true, padding: 12 } },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => ctx.dataset.label + ': ' +
-              (ctx.dataset.type === 'bar' ? ctx.parsed.y.toFixed(2) + '%' : fmtNum(ctx.parsed.y))
-          }
-        }
+        tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + (ctx.dataset.type === 'bar' ? ctx.parsed.y.toFixed(2) + '%' : fmtNum(ctx.parsed.y)) } }
       },
       scales: {
         x: { grid: { display: false }, ticks: { maxTicksLimit: 12, font: { size: 10 } } },
-        y: {
-          position: 'left',
-          grid: { color: 'rgba(0,0,0,0.06)' },
-          ticks: { callback: (v) => v.toFixed(1) + '%', font: { size: 10 } },
-          title: { display: true, text: 'Årlig vækst (%)', font: { size: 11 } }
-        },
-        y1: {
-          position: 'right',
-          grid: { display: false },
-          ticks: { callback: (v) => fmtNum(v), font: { size: 10 } },
-          title: { display: true, text: 'Befolkning', font: { size: 11 } }
-        }
+        y: { position: 'left', grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { callback: (v) => v.toFixed(1) + '%', font: { size: 10 } }, title: { display: true, text: 'Årlig vækst (%)', font: { size: 11 } } },
+        y1: { position: 'right', grid: { display: false }, ticks: { callback: (v) => fmtNum(v), font: { size: 10 } }, title: { display: true, text: 'Befolkning', font: { size: 11 } } }
       }
     }
   });
@@ -1003,24 +1172,18 @@ function buildTable() {
     const [t, v] = HVIDOVRE_TOTAL[i];
     const change = i > 0 ? v - HVIDOVRE_TOTAL[i-1][1] : 0;
     const changePct = i > 0 ? (change / HVIDOVRE_TOTAL[i-1][1] * 100) : 0;
-
-    // YTD
     const year = t.split('M')[0];
     const yearStart = HVIDOVRE_TOTAL.find(([t2]) => t2.startsWith(year));
     const ytd = yearStart ? v - yearStart[1] : 0;
-
-    // YoY
     const yoyMatch = HVIDOVRE_TOTAL.find(([t2]) => {
       const [y, m] = t.split('M');
       return t2 === `${+y-1}M${m}`;
     });
     const yoy = yoyMatch ? v - yoyMatch[1] : 0;
     const yoyPct = yoyMatch ? (yoy / yoyMatch[1] * 100) : 0;
-
     const changeClass = change > 0 ? 'pos' : change < 0 ? 'neg' : '';
     const ytdClass = ytd > 0 ? 'pos' : ytd < 0 ? 'neg' : '';
     const yoyClass = yoy > 0 ? 'pos' : yoy < 0 ? 'neg' : '';
-
     rows += `<tr>
       <td>${fmtPeriodFull(t)}</td>
       <td>${fmtNum(v)}</td>
@@ -1032,10 +1195,6 @@ function buildTable() {
   }
   tbody.innerHTML = rows;
 }
-
-// ============================================================
-// EXPORT CSV
-// ============================================================
 
 function exportCSV() {
   let csv = 'Måned;Befolkning;Ændring;ÆndringPct;YTD;YoY\n';
@@ -1060,19 +1219,8 @@ function exportCSV() {
   link.click();
 }
 
-// ============================================================
-// UPDATERS
-// ============================================================
-
-function updateTrend() {
-  const range = document.getElementById('trendRange').value;
-  buildTrend(range);
-}
-
-function updateMonthlyChange() {
-  const range = document.getElementById('changeRange').value;
-  buildMonthlyChange(range);
-}
+function updateTrend() { buildTrend(document.getElementById('trendRange').value); }
+function updateMonthlyChange() { buildMonthlyChange(document.getElementById('changeRange').value); }
 
 // ============================================================
 // INIT
