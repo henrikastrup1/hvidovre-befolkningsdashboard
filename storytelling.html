@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Befolkningsdashboard (Storytelling) — Hvidovre Kommune</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap');
+
+  :root {
+    --green:     #1A4D2E;
+    --green-mid: #2E7D54;
+    --gold:      #C9973A;
+    --gold-lite: #E8C06A;
+    --red:       #C0392B;
+    --bg:    #F9F6F0;
+    --card:  #FFFFFF;
+    --text:  #1C1C1A;
+    --mid:   #4A4A44;
+    --muted: #8A8A7E;
+    --border:#E2DDD4;
+    --shadow:0 2px 20px rgba(26,77,46,0.07);
+    --radius: 10px;
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+
+  /* HEADER */
+  .header {
+    background:var(--green); color:#fff;
+    padding:36px 48px 28px; position:relative; overflow:hidden;
+  }
+  .header::before {
+    content:''; position:absolute; right:-60px; bottom:-60px;
+    width:320px; height:320px; border-radius:50%;
+    background:rgba(255,255,255,.03); pointer-events:none;
+  }
+  .header::after {
+    content:''; position:absolute; right:80px; bottom:40px;
+    width:180px; height:180px; border-radius:50%;
+    background:rgba(255,255,255,.02); pointer-events:none;
+  }
+  .header-content { position:relative; z-index:1; max-width:1400px; margin:0 auto; }
+  .header-eye { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:10px; }
+  .header h1 { font-family:'DM Serif Display',serif; font-size:clamp(22px,2.8vw,32px); font-weight:400; line-height:1.2; margin-bottom:6px; }
+  .header h1 em { font-style:italic; color:var(--gold-lite); }
+  .header p { font-size:13px; color:rgba(255,255,255,.6); font-weight:300; line-height:1.65; max-width:640px; }
+  .header-tags { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .header-tag {
+    font-family:'DM Mono',monospace; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+    padding:4px 12px; border:1px solid rgba(255,255,255,.15); border-radius:20px;
+    color:rgba(255,255,255,.6); transition:all .15s;
+  }
+  .header-tag:hover { border-color:var(--gold); color:var(--gold-lite); }
+
+  /* TOOLBAR */
+  .toolbar {
+    background:var(--card); border-bottom:1px solid var(--border);
+    padding:10px 48px; display:flex; align-items:center;
+    gap:10px; flex-wrap:wrap;
+  }
+  .btn {
+    padding:7px 15px; border:1.5px solid var(--border); background:transparent;
+    font-family:'DM Sans',sans-serif; font-size:13px; color:var(--mid);
+    cursor:pointer; border-radius:6px; transition:all .15s; white-space:nowrap;
+  }
+  .btn:hover  { border-color:var(--green); color:var(--green); }
+  .btn.grn    { background:var(--green); border-color:var(--green); color:#fff; }
+  .btn.grn:hover { background:#143d24; }
+  .btn.gld    { background:var(--gold); border-color:var(--gold); color:#fff; }
+  .btn.gld:hover { background:var(--green); border-color:var(--green); }
+  .btn.small  { padding:5px 11px; font-size:12px; }
+
+  /* CONTAINER */
+  .container { max-width:1200px; margin:0 auto; padding:24px 48px 40px; }
+
+  /* KPI ROW */
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:11px; margin-bottom:24px; }
+  .kpi {
+    background:var(--card); border:1px solid var(--border); border-left:4px solid var(--green);
+    border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow);
+    transition:transform .15s, box-shadow .15s;
+  }
+  .kpi:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(26,77,46,0.1); }
+  .kpi.gld { border-left-color:var(--gold); }
+  .kpi.red { border-left-color:var(--red); }
+  .kpi.mid { border-left-color:var(--green-mid); }
+  .kpi.pur { border-left-color:#7B5EA7; }
+  .kpi-lbl  { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+  .kpi-val  { font-family:'DM Serif Display',serif; font-size:30px; line-height:1; color:var(--text); margin-bottom:2px; }
+  .kpi-desc { font-size:12px; color:var(--mid); line-height:1.4; }
+  .kpi-change { font-size:12.5px; font-weight:500; margin-top:3px; }
+
+  /* ANCHOR KPI — the one number that matters most */
+  .kpi.anchor {
+    grid-column:span 2; border-left-width:5px; border-left-color:var(--gold);
+    background:linear-gradient(135deg,#FFFFFF 0%,rgba(201,151,58,.05) 100%);
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .kpi.anchor .kpi-val { font-size:52px; color:var(--green); }
+  .kpi.anchor .kpi-lbl { font-size:11px; color:var(--gold); }
+  .kpi.anchor .kpi-desc { font-size:13px; }
+  @media (max-width:500px){ .kpi.anchor { grid-column:span 2; } }
+
+  /* HOVEDKONKLUSION (story lead) */
+  .lead {
+    background:var(--green); color:#fff;
+    border-radius:var(--radius); padding:30px 34px; margin-bottom:24px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .lead-eye { font-family:'DM Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-lite); margin-bottom:12px; }
+  .lead h2 { font-family:'DM Serif Display',serif; font-size:clamp(20px,2.4vw,27px); font-weight:400; line-height:1.3; margin-bottom:14px; max-width:880px; }
+  .lead h2 em { font-style:italic; color:var(--gold-lite); }
+  .lead-action {
+    display:flex; gap:13px; align-items:flex-start;
+    background:rgba(255,255,255,.07); border-left:3px solid var(--gold);
+    padding:14px 18px; border-radius:7px; max-width:880px;
+  }
+  .lead-action .la-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold-lite); margin-bottom:4px; }
+  .lead-action .la-body { font-size:14px; line-height:1.6; color:rgba(255,255,255,.92); font-weight:300; }
+  .lead-action .la-body strong { color:#fff; font-weight:500; }
+
+  /* ACT LABEL (three-act narrative) */
+  .act {
+    display:flex; align-items:baseline; gap:12px;
+    margin:6px 0 14px; padding-bottom:8px;
+  }
+  .act-num {
+    font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.1em;
+    color:var(--gold); font-weight:500;
+  }
+  .act-title { font-family:'DM Serif Display',serif; font-size:19px; font-weight:400; color:var(--green); }
+  .act-sub { font-size:12.5px; color:var(--muted); margin-left:auto; font-style:italic; }
+
+  /* SECTION */
+  .section {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px 28px;
+    margin-bottom:20px; box-shadow:var(--shadow);
+  }
+  .section-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:14px; flex-wrap:wrap; gap:8px;
+  }
+  .section-header h2 {
+    font-family:'DM Serif Display',serif;
+    font-size:18px; font-weight:400; line-height:1.25;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-header .hint {
+    font-family:'DM Mono',monospace; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); padding:4px 10px; background:var(--bg); border-radius:20px;
+  }
+  .section-header .filter-bar {
+    display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+  }
+  .section-header .filter-bar select {
+    padding:5px 11px; border:1.5px solid var(--border); border-radius:6px;
+    font-family:'DM Sans',sans-serif; font-size:12px; color:var(--mid);
+    background:white; cursor:pointer; outline:none;
+  }
+  .section-header .filter-bar select:hover { border-color:var(--green); }
+
+  .chart-wrap { position:relative; width:100%; min-height:320px; }
+  .chart-wrap.tall { min-height:400px; }
+  .chart-wrap.short { min-height:180px; }
+  .chart-wrap canvas { max-height: 100%; max-width: 100%; }
+
+  /* INSIGHT CARD */
+  .insight {
+    border-radius:var(--radius); padding:14px 18px; margin-top:12px;
+    border-left:4px solid var(--green); background:rgba(46,125,84,.05);
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .insight .i-icon { flex-shrink:0; font-size:20px; line-height:1.3; }
+  .insight .i-title { font-weight:500; font-size:14px; margin-bottom:3px; }
+  .insight .i-body { font-size:13px; line-height:1.6; color:var(--mid); }
+  .insight.gld { border-left-color:var(--gold); background:rgba(201,151,58,.06); }
+  .insight.red { border-left-color:var(--red); background:rgba(192,57,43,.05); }
+  .insight.blu { border-left-color:#5DADE2; background:rgba(93,173,226,.06); }
+  .insight.pur { border-left-color:#7B5EA7; background:rgba(123,94,167,.06); }
+
+  /* GRID */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+
+  /* AGE BARS */
+  .age-bar-grid { display:grid; gap:5px; }
+  .age-bar-row { display:grid; grid-template-columns:170px 1fr 65px; align-items:center; gap:10px; }
+  .age-bar-row .alabel { font-size:13px; font-weight:500; text-align:right; }
+  .age-bar-row .abar {
+    height:26px; border-radius:5px; transition:width .6s ease;
+    display:flex; align-items:center; padding-left:10px;
+    font-size:12px; font-weight:600; color:white; min-width:28px;
+  }
+  .age-bar-row .aval { font-size:14px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--mid); }
+
+  /* DEMO GRID */
+  .demo-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
+  .demo-card { padding:12px; border-radius:8px; text-align:center; }
+  .demo-val { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; }
+  .demo-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:2px; }
+
+  /* RISK GRID */
+  .risk-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .risk-card {
+    border-radius:8px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;
+    border-left:3px solid;
+  }
+  .risk-card .r-tag {
+    flex-shrink:0; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.08em;
+    text-transform:uppercase; font-weight:500; padding:3px 8px; border-radius:4px;
+    color:#fff; white-space:nowrap; margin-top:1px;
+  }
+  .risk-card .r-title { font-weight:500; font-size:13.5px; }
+  .risk-card .r-body { font-size:12px; margin-top:2px; line-height:1.5; color:var(--mid); }
+  .risk-card.high { background:rgba(192,57,43,.06); border-color:var(--red); }
+  .risk-card.high .r-tag { background:var(--red); }
+  .risk-card.medium { background:rgba(201,151,58,.06); border-color:var(--gold); }
+  .risk-card.medium .r-tag { background:var(--gold); }
+  .risk-card.low { background:rgba(46,125,84,.06); border-color:var(--green-mid); }
+  .risk-card.low .r-tag { background:var(--green-mid); }
+
+  /* QUESTIONS */
+  .q-list { display:grid; gap:8px; }
+  .q-item {
+    padding:12px 16px; border-radius:8px;
+    background:var(--bg); border-left:3px solid var(--gold);
+    font-size:13.5px; line-height:1.5;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .q-item .q-num {
+    background:var(--gold); color:white;
+    width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:600; flex-shrink:0;
+  }
+  .q-item strong { color:var(--text); }
+
+  /* DATA TABLE */
+  .data-table-wrap { max-height:400px; overflow-y:auto; border:1px solid var(--border); border-radius:8px; }
+  .data-table-wrap::-webkit-scrollbar { width:5px; }
+  .data-table-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  table.data-table { width:100%; border-collapse:collapse; font-size:13px; }
+  table.data-table th {
+    position:sticky; top:0; background:var(--bg);
+    padding:9px 11px; text-align:right; font-weight:600;
+    font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    border-bottom:2px solid var(--border); z-index:1;
+  }
+  table.data-table th:first-child { text-align:left; }
+  table.data-table td {
+    padding:7px 11px; text-align:right; border-bottom:1px solid var(--border);
+    font-variant-numeric:tabular-nums; font-size:13px;
+  }
+  table.data-table td:first-child { text-align:left; font-weight:500; }
+  table.data-table tr:hover td { background:rgba(26,77,46,.03); }
+  table.data-table .pos { color:var(--green); }
+  table.data-table .neg { color:var(--red); }
+
+  /* FOOTER */
+  .footer {
+    text-align:center; font-size:12.5px; color:var(--muted); padding:24px 0;
+    border-top:1px solid var(--border); margin-top:8px;
+  }
+  .footer a { color:var(--green); text-decoration:none; }
+  .footer a:hover { color:var(--gold); }
+  .footer code { font-family:'DM Mono',monospace; font-size:11px; background:var(--bg); padding:1px 6px; border-radius:3px; }
+
+  .footnote { font-size:12px; color:var(--muted); margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
+
+  @media (max-width:900px) {
+    .grid-2, .risk-grid { grid-template-columns:1fr; }
+    .demo-grid { grid-template-columns:1fr 1fr; }
+    .header { padding:24px 20px 20px; }
+    .container { padding:16px 16px 32px; }
+    .toolbar { padding:10px 16px; }
+    .age-bar-row { grid-template-columns:120px 1fr 50px; }
+    .age-bar-row .alabel { font-size:12px; }
+  }
+  @media (max-width:500px) {
+    .kpi-row { grid-template-columns:1fr 1fr; }
+    .demo-grid { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-content">
+    <div class="header-eye">Økonomi &amp; Planlægning</div>
+    <h1>Befolkningsdashboard · <em>Hvidovre</em> Kommune</h1>
+    <p>Månedlig befolkningsmonitor med aldersanalyse, nabosammenligning og budgetrelevante nøgletal. Kilde: Danmarks Statistik FOLK1AM.</p>
+    <div class="header-tags">
+      <span class="header-tag">Seneste data: apr 2026</span>
+      <span class="header-tag">54.152 indbyggere</span>
+      <span class="header-tag">+0,7% årlig vækst</span>
+      <span class="header-tag">Forsørgerbyrde: 59,7</span>
+    </div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <span class="btn small grn" onclick="exportCSV()">⬇ Eksportér rådata (CSV)</span>
+  <span style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--muted);margin-left:auto;">
+    Opdateret: april 2026
+  </span>
+</div>
+
+<div class="container">
+
+  <!-- ═══ HOVEDKONKLUSION (story lead) ═══ -->
+  <div class="lead">
+    <div class="lead-eye">Hovedkonklusion · april 2026</div>
+    <h2>Hvidovres vækstboom i 2025 var <em>midlertidigt</em> — i 2026 falder befolkningen, og kommunen vokser strukturelt <em>langsommere</em> end alle naboer. Med pensionsbølgen fra 2030 stiger udgiftspresset.</h2>
+    <div class="lead-action">
+      <div>
+        <div class="la-lbl">Hvad dataen kalder på</div>
+        <div class="la-body">Næste budgetforhandling bør tage stilling til <strong>(1)</strong> om Hvidovre aktivt skal tiltrække erhvervsaktive borgere for at sikre skattegrundlaget, og <strong>(2)</strong> hvornår der skal planlægges kapacitet i ældreplejen op mod 2030.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI ROW — forsørgerbyrde som visuelt anker -->
+  <div class="kpi-row">
+    <div class="kpi anchor">
+      <div class="kpi-lbl">⚖️ Forsørgerbyrde — det tal der driver udgiftspresset</div>
+      <div class="kpi-val" id="mDepRatio"></div>
+      <div class="kpi-desc">børn + ældre pr. 100 i den erhvervsaktive alder. Stiger med pensionsbølgen fra 2030.</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Befolkning</div>
+      <div class="kpi-val" id="mCurrent">54.152</div>
+      <div class="kpi-desc" id="mYoY"></div>
+    </div>
+    <div class="kpi gld">
+      <div class="kpi-lbl">Ændring i år (YTD)</div>
+      <div class="kpi-val" id="mYtd"></div>
+      <div class="kpi-desc" id="mYtdDetail"></div>
+    </div>
+    <div class="kpi mid">
+      <div class="kpi-lbl">Årlig vækstrate</div>
+      <div class="kpi-val" id="mGrowth"></div>
+      <div class="kpi-desc">siden apr 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Arbejdsstyrke</div>
+      <div class="kpi-val" id="mWorkforce"></div>
+      <div class="kpi-desc" id="mWorkforcePct">af befolkningen</div>
+    </div>
+  </div>
+
+  <!-- ═══ AKT 1 — HVAD SKER DER? ═══ -->
+  <div class="act">
+    <span class="act-num">AKT 1</span>
+    <span class="act-title">Hvad sker der?</span>
+    <span class="act-sub">Boomet i 2025 er vendt til fald i 2026</span>
+  </div>
+
+  <!-- ROW 1: TREND + MONTHLY -->
+  <div class="grid-2">
+    <div class="section">
+      <div class="section-header">
+        <h2>Befolkningsudvikling</h2>
+        <div class="filter-bar">
+          <select id="trendRange" onchange="updateTrend()">
+            <option value="all">Hele perioden</option>
+            <option value="3y">Sidste 3 år</option>
+            <option value="2y" selected>Sidste 2 år</option>
+            <option value="1y">Sidste år</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+      <div class="insight">
+        <div class="i-icon">📌</div>
+        <div class="i-content">
+          <div class="i-title">2025 — et usædvanligt år</div>
+          <div class="i-body">
+            Fra maj til december 2025 voksede Hvidovre med <strong>+549 personer</strong> — mod næsten nul i jan–apr. Den pludselige acceleration afviger markant fra mønstret i 2022–2024. Skyldes det <strong>nye boligprojekter, tilflytning eller ændret registreringspraksis</strong>?
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <h2>Månedlige ændringer</h2>
+        <div class="filter-bar">
+          <select id="changeRange" onchange="updateMonthlyChange()">
+            <option value="all">Hele perioden</option>
+            <option value="3y">Sidste 3 år</option>
+            <option value="2y" selected>Sidste 2 år</option>
+            <option value="1y">Sidste år</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-wrap short"><canvas id="chartMonthlyChange"></canvas></div>
+      <div class="insight red">
+        <div class="i-icon">⚠️</div>
+        <div class="i-content">
+          <div class="i-title">2026 — fire måneder med fald</div>
+          <div class="i-body">
+            Januar–april 2026 viser <strong>negative nettotal</strong> hver måned (−76 i alt). Faldet er større end sæsonudsvingene tidligere år. For tidligt at konkludere strukturel nedgang, men udviklingen bør følges nøje de næste 3–4 måneder.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AKT 2 — HVORFOR ER DET VIGTIGT? ═══ -->
+  <div class="act">
+    <span class="act-num">AKT 2</span>
+    <span class="act-title">Hvorfor er det vigtigt?</span>
+    <span class="act-sub">Lavere vækst end naboerne — og en pensionsbølge på vej</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="section">
+      <div class="section-header">
+        <h2>Nabokommuner — indekseret vækst</h2>
+        <span class="hint">2021 = 100</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chartComparison"></canvas></div>
+      <div class="insight red">
+        <div class="i-icon">▲</div>
+        <div class="i-content">
+          <div class="i-title">Hvidovre sakker bagud</div>
+          <div class="i-body">
+            Siden 2021 er Hvidovre vokset med <strong>kun 1,6%</strong> — Brøndby +15,7%, Herlev +11,4%, Ballerup +9,6%, Rødovre +9,5%. Forskellen mellem Hvidovre og Rødovre alene svarer til <strong>ca. 3.900 flere indbyggere i Rødovre</strong>. Det udhuler skattegrundlaget relativt over tid.
+          </div>
+        </div>
+      </div>
+      <div class="footnote">Indeks apr 2026: Brøndby 116, Rødovre 110, Ballerup 110, Herlev 111, Gladsaxe 103, Hvidovre 102 (2021 = 100).</div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <h2>Aldersgrupper</h2>
+        <span class="hint">Budgetrelevante inddelinger</span>
+      </div>
+      <div id="ageGroupBars"></div>
+      <div class="demo-grid" id="demoGrid"></div>
+      <div class="insight gld" style="margin-top:12px;">
+        <div class="i-icon">⏳</div>
+        <div class="i-content">
+          <div class="i-title">Pensionsbølgen bygger sig op</div>
+          <div class="i-body">
+            Gruppen <strong>40–64 år</strong> udgør 32,5% af befolkningen. Når den store årgang går på pension <strong>fra ca. 2030</strong>, stiger forsørgerbyrden markant. De <strong>65–69-årige</strong> (3.031) er langt flere end de 75–79-årige (1.695) — så presset på ældreplejen vokser kraftigt om 5–10 år.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AKT 3 — HVAD BØR VI GØRE? ═══ -->
+  <div class="act">
+    <span class="act-num">AKT 3</span>
+    <span class="act-title">Hvad bør vi gøre?</span>
+    <span class="act-sub">Fra observation til beslutning</span>
+  </div>
+
+  <!-- RISK ASSESSMENT -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Risikovurdering</h2>
+      <span class="hint">På baggrund af demografiske data</span>
+    </div>
+    <div class="risk-grid">
+      <div class="risk-card high">
+        <div class="r-tag">Kritisk</div>
+        <div>
+          <div class="r-title">Pensionsbølgen 2030–2045</div>
+          <div class="r-body">40–64 år = 17.625 personer nærmer sig pension. Stigende forsørgerbyrde og fald i skatteindtægter. Tidshorisont: 5–15 år.</div>
+        </div>
+      </div>
+      <div class="risk-card high">
+        <div class="r-tag">Kritisk</div>
+        <div>
+          <div class="r-title">Lav vækst vs. naboer</div>
+          <div class="r-body">Hvidovre vokser langsommere end alle nabokommuner undtagen Gladsaxe. Udhuler skattegrundlaget relativt. Allerede synligt.</div>
+        </div>
+      </div>
+      <div class="risk-card medium">
+        <div class="r-tag">Observation</div>
+        <div>
+          <div class="r-title">Ældreplejens kapacitet</div>
+          <div class="r-body">9.839 ældre i dag — 65–69 år (3.031) er dobbelt så stor som 75–79 år (1.695). Tidshorisont: 5–10 år.</div>
+        </div>
+      </div>
+      <div class="risk-card medium">
+        <div class="r-tag">Observation</div>
+        <div>
+          <div class="r-title">Rekruttering af arbejdskraft</div>
+          <div class="r-body">Aldrende befolkning = sværere at rekruttere til sosu, pædagogik, sygepleje og skole. Allerede mærkbar.</div>
+        </div>
+      </div>
+      <div class="risk-card low">
+        <div class="r-tag">Stabilt</div>
+        <div>
+          <div class="r-title">Sæsonudsving 2026</div>
+          <div class="r-body">Faldet YTD (−76) kan være sæsonbetinget. Afklares i løbet af 3–4 måneder.</div>
+        </div>
+      </div>
+      <div class="risk-card low">
+        <div class="r-tag">Stabilt</div>
+        <div>
+          <div class="r-title">Stor arbejdsstyrke som buffer</div>
+          <div class="r-body">62,6% i erhvervsaktiv alder giver et solidt skattegrundlag de næste 5–7 år.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANBEFALING (resolution) -->
+  <div class="section" style="border-left:4px solid var(--gold);">
+    <div class="section-header">
+      <h2>Anbefaling til budgetforhandlingen</h2>
+      <span class="hint">Hvad dataen kalder på</span>
+    </div>
+    <div class="q-list">
+      <div class="q-item"><div class="q-num">1</div><div><strong>Tag stilling til en aktiv tilflytningsstrategi.</strong><br>Hvidovre vokser langsommere end alle naboer. Beslut om kommunen vil prioritere boligudvikling og erhvervsaktiv tilflytning — eller acceptere et relativt faldende skattegrundlag.</div></div>
+      <div class="q-item"><div class="q-num">2</div><div><strong>Igangsæt kapacitetsplanlægning for ældreplejen nu.</strong><br>De 65–69-årige er næsten dobbelt så mange som de 75–79-årige. Presset rammer om 5–10 år — beslutninger om plejekapacitet skal træffes i god tid.</div></div>
+      <div class="q-item"><div class="q-num">3</div><div><strong>Følg 2026-faldet kvartalsvist før prognoserne justeres.</strong><br>Faldet (−76 YTD) kan være sæsonbetinget. Genvurder skatteindtægtsprognosen, hvis den negative tendens fortsætter efter sommeren.</div></div>
+    </div>
+    <div class="footnote">Bemærk: Den kommunale udligning betyder, at vækst ikke automatisk giver flere penge i kassen — men lav eller negativ vækst kombineret med en aldrende befolkning udhuler handlefriheden over tid. Afvejningen bør indgå i prioriteringen.</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p><strong>Kilde:</strong> Danmarks Statistik, tabel FOLK1AM · <strong>Seneste opdatering:</strong> april 2026 · API: <code>api.statbank.dk</code></p>
+    <p style="margin-top:4px;">Dashboard og analyse udarbejdet på baggrund af offentligt tilgængelige data. Indeholder ikke Hvidovre Kommunes officielle holdning.</p>
+    <p style="margin-top:6px;"><a href="https://github.com/henrikastrup1/hvidovre-befolkningsdashboard" target="_blank">GitHub</a></p>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════
+// DATA
+// ═══════════════════════════
+
+const TOTAL = [
+  ['2021M10',53277],['2021M11',53277],['2021M12',53292],
+  ['2022M01',53267],['2022M02',53216],['2022M03',53209],['2022M04',53223],['2022M05',53247],['2022M06',53328],['2022M07',53324],['2022M08',53289],['2022M09',53359],['2022M10',53474],['2022M11',53524],['2022M12',53490],
+  ['2023M01',53443],['2023M02',53495],['2023M03',53500],['2023M04',53549],['2023M05',53577],['2023M06',53628],['2023M07',53625],['2023M08',53696],['2023M09',53760],['2023M10',53773],['2023M11',53766],['2023M12',53737],
+  ['2024M01',53760],['2024M02',53776],['2024M03',53785],['2024M04',53785],['2024M05',53817],['2024M06',53814],['2024M07',53803],['2024M08',53838],['2024M09',53823],['2024M10',53759],['2024M11',53846],['2024M12',53805],
+  ['2025M01',53760],['2025M02',53721],['2025M03',53775],['2025M04',53757],['2025M05',53821],['2025M06',53938],['2025M07',53973],['2025M08',54007],['2025M09',54066],['2025M10',54155],['2025M11',54250],['2025M12',54306],
+  ['2026M01',54228],['2026M02',54210],['2026M03',54175],['2026M04',54152]
+];
+
+const AD = [[0,513],[1,507],[2,582],[3,583],[4,647],[5,679],[6,660],[7,672],[8,788],[9,692],[10,698],[11,688],[12,666],[13,655],[14,651],[15,721],[16,684],[17,686],[18,669],[19,690],[20,635],[21,659],[22,659],[23,564],[24,631],[25,626],[26,619],[27,607],[28,598],[29,624],[30,657],[31,695],[32,646],[33,683],[34,734],[35,757],[36,784],[37,808],[38,800],[39,771],[40,786],[41,720],[42,775],[43,741],[44,764],[45,761],[46,760],[47,752],[48,807],[49,727],[50,736],[51,735],[52,728],[53,751],[54,692],[55,604],[56,622],[57,637],[58,659],[59,694],[60,703],[61,650],[62,707],[63,568],[64,546],[65,580],[66,525],[67,570],[68,526],[69,533],[70,530],[71,448],[72,457],[73,420],[74,395],[75,436],[76,380],[77,398],[78,389],[79,389],[80,399],[81,363],[82,321],[83,274],[84,264],[85,226],[86,177],[87,176],[88,129],[89,121],[90,98],[91,80],[92,59],[93,38],[94,34],[95,30],[96,20],[97,19],[98,13],[99,13],[100,3],[101,4],[102,1],[103,0],[104,1]];
+
+const PYR = [];
+for(let s=0;s<=100;s+=5){let t=0;for(const[a,v]of AD)if(a>=s&&a<s+5)t+=v;PYR.push({l:s+'-'+(s+4),v:t});}
+
+const AGB = [
+  {l:'0-2 år (vuggestue)',lo:0,hi:2,c:'#5DADE2'},
+  {l:'3-5 år (børnehave)',lo:3,hi:5,c:'#48C9B0'},
+  {l:'6-15 år (skole)',lo:6,hi:15,c:'#2E7D54'},
+  {l:'16-24 år (ungdom)',lo:16,hi:24,c:'#1A4D2E'},
+  {l:'25-39 år (yngre voksne)',lo:25,hi:39,c:'#C9973A'},
+  {l:'40-64 år (midaldrende)',lo:40,hi:64,c:'#C0392B'},
+  {l:'65-79 år (ældre)',lo:65,hi:79,c:'#8E44AD'},
+  {l:'80+ år (ældste)',lo:80,hi:125,c:'#6C3483'}
+];
+
+const KOM = [
+  {n:'Hvidovre',k:'167',c:'#1A4D2E'},
+  {n:'Brøndby',k:'153',c:'#059669'},
+  {n:'Rødovre',k:'175',c:'#C0392B'},
+  {n:'Ballerup',k:'151',c:'#C9973A'},
+  {n:'Gladsaxe',k:'159',c:'#7B5EA7'},
+  {n:'Herlev',k:'163',c:'#0891B2'}
+];
+
+const KD = {
+  'Hvidovre':TOTAL,
+  'Brøndby':[['2021M10',35501],['2022M01',35651],['2022M04',35850],['2022M07',36161],['2022M10',36610],['2023M01',37128],['2023M04',37519],['2023M07',37899],['2023M10',38652],['2024M01',39067],['2024M04',39400],['2024M07',39657],['2024M10',40180],['2025M01',40401],['2025M04',40517],['2025M07',40576],['2025M10',40663],['2026M01',40990],['2026M04',41059]],
+  'Rødovre':[['2021M10',41219],['2022M01',41382],['2022M04',41478],['2022M07',41649],['2022M10',42408],['2023M01',42563],['2023M04',43107],['2023M07',43594],['2023M10',43925],['2024M01',44328],['2024M04',44512],['2024M07',44637],['2024M10',44646],['2025M01',44734],['2025M04',44897],['2025M07',44999],['2025M10',45074],['2026M01',45138],['2026M04',45139]],
+  'Ballerup':[['2021M10',49259],['2022M01',49274],['2022M04',49422],['2022M07',49623],['2022M10',49854],['2023M01',50039],['2023M04',50141],['2023M07',50474],['2023M10',50812],['2024M01',51237],['2024M04',51619],['2024M07',52103],['2024M10',52517],['2025M01',52939],['2025M04',53398],['2025M07',53657],['2025M10',53840],['2026M01',53950],['2026M04',53988]],
+  'Gladsaxe':[['2021M10',69135],['2022M01',69259],['2022M04',69264],['2022M07',69520],['2022M10',69887],['2023M01',70001],['2023M04',70067],['2023M07',70322],['2023M10',70573],['2024M01',70600],['2024M04',70681],['2024M07',70902],['2024M10',71046],['2025M01',70958],['2025M04',70894],['2025M07',70882],['2025M10',71135],['2026M01',71185],['2026M04',70949]],
+  'Herlev':[['2021M10',28868],['2022M01',28867],['2022M04',28807],['2022M07',28864],['2022M10',29027],['2023M01',29215],['2023M04',29332],['2023M07',29318],['2023M10',29533],['2024M01',29876],['2024M04',30037],['2024M07',30177],['2024M10',30378],['2025M01',30784],['2025M04',31145],['2025M07',31535],['2025M10',31856],['2026M01',32030],['2026M04',32147]]
+};
+
+// ═══════════════════════════
+// HELPERS
+// ═══════════════════════════
+
+const MO=['','jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+function fp(p){if(!p||!p.includes('M'))return p||'';const[y,m]=p.split('M');return MO[+m]+' '+y.slice(2);}
+function fpf(p){if(!p||!p.includes('M'))return p||'';const[y,m]=p.split('M');const ms=['','januar','februar','marts','april','maj','juni','juli','august','september','oktober','november','december'];return ms[+m]+' '+y;}
+function fn(n){return n.toLocaleString('da-DK');}
+function fr(d,r){if(r==='all')return d;const n=new Date(),y={'1y':1,'2y':2,'3y':3};const c=new Date(n.getFullYear()-y[r],n.getMonth(),1);return d.filter(([t])=>{const[y,m]=t.split('M');return new Date(+y,+m-1,1)>=c;});}
+function fP(v){return(v>=0?'+':'')+v.toFixed(1)+'%';}
+
+// ═══════════════════════════
+// BUILD
+// ═══════════════════════════
+
+let charts={};
+
+function build() {
+  // Metrics
+  const l=TOTAL[TOTAL.length-1][1], ytdS=TOTAL.find(([t])=>t==='2026M01')[1], ytdC=l-ytdS,
+        yrA=TOTAL.find(([t])=>t==='2025M04')[1], yoy=l-yrA, yoyP=(yoy/yrA)*100;
+  const mC=[],w=TOTAL.filter(([t])=>t.startsWith('202')).length;for(let i=1;i<TOTAL.length;i++)mC.push(TOTAL[i][1]-TOTAL[i-1][1]);
+  const aM=mC.reduce((a,b)=>a+b,0)/mC.length, aG=(aM/(l-aM*6))*12*100;
+  const ch=AD.filter(([a])=>a>=0&&a<=15).reduce((s,[_,v])=>s+v,0),
+        wo=AD.filter(([a])=>a>=16&&a<=64).reduce((s,[_,v])=>s+v,0),
+        el=AD.filter(([a])=>a>=65).reduce((s,[_,v])=>s+v,0),
+        dR=((ch+el)/wo*100).toFixed(1);
+
+  document.getElementById('mCurrent').textContent=fn(l);
+  document.getElementById('mYtd').textContent=(ytdC>=0?'+':'')+fn(ytdC);
+  document.getElementById('mYtd').style.color=ytdC>=0?'var(--green)':'var(--red)';
+  document.getElementById('mYtdDetail').textContent=(ytdC/ytdS*100).toFixed(2)+'% af start';
+  const yEl=document.getElementById('mYoY');yEl.textContent=(yoy>=0?'+':'')+fn(yoy)+' ('+fP(yoyP)+') år-over-år';
+  document.getElementById('mGrowth').textContent=fP(aG);
+  document.getElementById('mDepRatio').textContent=dR;
+  document.getElementById('mWorkforce').textContent=fn(wo);
+  document.getElementById('mWorkforcePct').textContent=(wo/l*100).toFixed(1)+'%';
+
+  // Demo cards
+  document.getElementById('demoGrid').innerHTML=
+    `<div class="demo-card" style="background:rgba(46,125,84,.08)"><div class="demo-val" style="color:var(--green-mid)">${fn(ch)}</div><div class="demo-lbl">Børn 0–15</div></div>`+
+    `<div class="demo-card" style="background:rgba(26,77,46,.08)"><div class="demo-val" style="color:var(--green)">${fn(wo)}</div><div class="demo-lbl">Arbejdsstyrke 16–64</div></div>`+
+    `<div class="demo-card" style="background:rgba(142,68,173,.08)"><div class="demo-val" style="color:var(--pur)">${fn(el)}</div><div class="demo-lbl">Ældre 65+</div></div>`+
+    `<div class="demo-card" style="background:rgba(201,151,58,.08)"><div class="demo-val" style="color:var(--gold)">${dR}</div><div class="demo-lbl">Forsørgerbyrde</div></div>`;
+
+  // Age bars
+  const cEl=document.getElementById('ageGroupBars');
+  const gs=AGB.map(g=>({...g,t:AD.filter(([a])=>a>=g.lo&&a<=g.hi).reduce((s,[_,v])=>s+v,0)}));
+  const mV=Math.max(...gs.map(g=>g.t));
+  let h='<div class="age-bar-grid">';
+  for(const g of gs){
+    const p=(g.t/mV*100).toFixed(0),pp=(g.t/l*100).toFixed(1);
+    h+=`<div class="age-bar-row"><div class="alabel">${g.l}</div><div><div class="abar" style="width:${p}%;background:${g.c}">${fn(g.t)}</div></div><div class="aval">${pp}%</div></div>`;
+  }
+  h+='</div>';cEl.innerHTML=h;
+
+  // Charts
+  buildTrend('2y');
+  buildMonthlyChange('2y');
+  buildComparison();
+}
+
+// CHART: Trend
+function buildTrend(r){
+  const d=fr(TOTAL,r),lb=d.map(([t])=>fp(t)),va=d.map(([_,v])=>v);
+  if(charts.t)charts.t.destroy();
+  charts.t=new Chart(document.getElementById('chartTrend'),{
+    type:'line',data:{labels:lb,datasets:[{data:va,borderColor:'#1A4D2E',backgroundColor:c=>{const g=c.chart.ctx.createLinearGradient(0,0,0,300);g.addColorStop(0,'rgba(26,77,46,.12)');g.addColorStop(1,'rgba(26,77,46,0)');return g;},fill:true,tension:.3,pointRadius:2,pointHoverRadius:5,pointBackgroundColor:'#1A4D2E',borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fn(ctx.parsed.y)+' indbyggere'}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:20,font:{family:'DM Sans',size:11}}},y:{beginAtZero:false,grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>fn(v),font:{family:'DM Sans',size:11}}}}}
+  });
+}
+
+// CHART: Monthly change
+function buildMonthlyChange(r){
+  const d=fr(TOTAL,r);const ch=[];
+  for(let i=1;i<d.length;i++)ch.push({l:fp(d[i][0]),v:d[i][1]-d[i-1][1]});
+  if(charts.m)charts.m.destroy();
+  charts.m=new Chart(document.getElementById('chartMonthlyChange'),{
+    type:'bar',data:{labels:ch.map(c=>c.l),datasets:[{data:ch.map(c=>c.v),backgroundColor:ch.map(c=>c.v>=0?'rgba(46,125,84,.6)':'rgba(192,57,43,.6)'),borderColor:ch.map(c=>c.v>=0?'#2E7D54':'#C0392B'),borderWidth:1,borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>(ctx.parsed.y>=0?'+':'')+fn(ctx.parsed.y)}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:20,font:{family:'DM Sans',size:10}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>(v>=0?'+':'')+v,font:{family:'DM Sans',size:10}}}}}
+  });
+}
+
+// CHART: Comparison
+function buildComparison(){
+  if(charts.c)charts.c.destroy();
+  const qq=['2022M01','2022M04','2022M07','2022M10','2023M01','2023M04','2023M07','2023M10','2024M01','2024M04','2024M07','2024M10','2025M01','2025M04','2025M07','2025M10','2026M01','2026M04'];
+  const ds=KOM.map(k=>{const r=KD[k.n];const b=r[0][1];const ix=qq.map(q=>{const m=r.find(([t])=>t===q);return m?(m[1]/b)*100:null;}).filter(v=>v!==null);return{label:k.n,data:ix,borderColor:k.c,backgroundColor:k.c+'20',tension:.3,pointRadius:k.n==='Hvidovre'?3:2,pointBackgroundColor:k.c,borderWidth:k.n==='Hvidovre'?3:1.5,borderDash:k.n==='Hvidovre'?[]:[4,3]};});
+  charts.c=new Chart(document.getElementById('chartComparison'),{
+    type:'line',data:{labels:qq,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11},usePointStyle:true,padding:12}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)}}},scales:{x:{grid:{display:false},ticks:{maxTicksLimit:12,font:{family:'DM Sans',size:10}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v.toFixed(1),font:{family:'DM Sans',size:10}}}}}
+  });
+}
+
+function exportCSV(){
+  let c='Måned;Befolkning;Ændring;ÆndringPct;YTD;YoY\n';
+  for(let i=0;i<TOTAL.length;i++){
+    const[t,v]=TOTAL[i],ch=i>0?v-TOTAL[i-1][1]:0,chP=i>0?(ch/TOTAL[i-1][1]*100).toFixed(2):0;
+    const yr=t.split('M')[0],yS=TOTAL.find(([t2])=>t2.startsWith(yr)),ytd=yS?v-yS[1]:0;
+    const yM=TOTAL.find(([t2])=>{const[y,m]=t.split('M');return t2===(+y-1)+'M'+m;});
+    const yoy=yM?v-yM[1]:0;
+    c+=t+';'+v+';'+ch+';'+chP+';'+ytd+';'+yoy+'\n';
+  }
+  const b=new Blob([c],{type:'text/csv;charset=utf-8;'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='hvidovre_befolkning.csv';l.click();
+}
+
+function updateTrend(){buildTrend(document.getElementById('trendRange').value);}
+function updateMonthlyChange(){buildMonthlyChange(document.getElementById('changeRange').value);}
+
+document.addEventListener('DOMContentLoaded',build);
+</script>
+
+</body>
+</html>
